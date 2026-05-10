@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Kimchi Calculator</title>
+
+  <style>
+    :root {
+      --bg: #fff7ed;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --border: #fed7aa;
+      --soft-border: #ffedd5;
+      --accent: #dc2626;
+      --accent-dark: #991b1b;
+      --shadow: 0 10px 30px rgba(124, 45, 18, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { -webkit-text-size-adjust: 100%; }
+
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, #fee2e2 0, transparent 32rem),
+        var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 760px;
+      margin: 0 auto;
+      padding: max(24px, env(safe-area-inset-top)) 16px max(44px, env(safe-area-inset-bottom));
+    }
+
+    .hero {
+      margin-bottom: 22px;
+      text-align: center;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0 0 14px;
+      font-size: clamp(2.25rem, 8vw, 3.4rem);
+      line-height: 0.95;
+      letter-spacing: -0.055em;
+      color: var(--accent-dark);
+      text-wrap: balance;
+    }
+
+    .lead {
+      margin: 0 auto;
+      max-width: 34rem;
+      color: var(--muted);
+      font-size: 1.05rem;
+    }
+
+    #locale {
+      flex: 0 0 auto;
+      font: inherit;
+      font-weight: 700;
+      padding: 9px 40px 9px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.85);
+      color: var(--accent-dark);
+      box-shadow: 0 2px 8px rgba(124, 45, 18, 0.06);
+
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+
+      background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='M5 7.5L10 12.5L15 7.5' stroke='%23991b1b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      background-size: 16px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid var(--soft-border);
+      border-radius: 24px;
+      padding: 20px;
+      margin-bottom: 18px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(8px);
+    }
+
+    .input-label {
+      display: block;
+      margin-bottom: 12px;
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--accent-dark);
+    }
+
+    .input-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      min-width: 0;
+      font: inherit;
+      font-size: 1.35rem;
+      font-weight: 750;
+      padding: 15px 16px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text);
+      outline: none;
+      box-shadow: inset 0 1px 2px rgba(124, 45, 18, 0.04);
+    }
+
+    input[type="number"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.10);
+    }
+
+    .unit {
+      font-weight: 800;
+      color: var(--accent-dark);
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 1.18rem;
+      letter-spacing: -0.025em;
+      color: var(--accent-dark);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    td {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--soft-border);
+      vertical-align: top;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    td:last-child {
+      text-align: right;
+      font-weight: 800;
+      white-space: nowrap;
+      color: var(--accent-dark);
+    }
+
+    .muted {
+      margin: 14px 0 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    ol, ul {
+      margin: 0;
+      padding-left: 22px;
+    }
+
+    li + li { margin-top: 14px; }
+
+    strong { color: var(--accent); }
+
+    .footer {
+      text-align: center;
+      margin: 24px 0 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+
+      .topbar {
+        margin-bottom: 14px;
+      }
+
+      h1 {
+        font-size: 2.15rem;
+        line-height: 0.95;
+        letter-spacing: -0.055em;
+      }
+
+      #locale {
+        min-width: auto;
+        padding: 8px 34px 8px 16px;
+        font-size: 0.9rem;
+        background-position: right 12px center;
+        background-size: 14px;
+      }
+
+      .card {
+        border-radius: 22px;
+        padding: 17px;
+      }
+
+      td {
+        padding: 10px 0;
+        font-size: 0.95rem;
+      }
+
+      input[type="number"] { font-size: 1.2rem; }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="container">
+    <header class="hero">
+      <div class="topbar">
+        <select id="locale" aria-label="Language">
+          <option value="en">English</option>
+          <option value="fr">Français</option>
+        </select>
+      </div>
+
+      <h1 data-i18n="title">Kimchi Calculator</h1>
+
+      <p class="lead" data-i18n="lead">
+        Enter how much Napa cabbage you have. Everything else scales automatically.
+      </p>
+    </header>
+
+    <section class="card">
+      <label class="input-label" for="cabbage" data-i18n="cabbageWeight">
+        Napa cabbage weight
+      </label>
+
+      <div class="input-row">
+        <input id="cabbage" type="number" min="100" step="50" value="1000" inputmode="decimal" />
+        <span class="unit">g</span>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 data-i18n="ingredients">Ingredients</h2>
+
+      <table>
+        <tr><td data-i18n="napa">Napa cabbage</td><td><span id="cabbageOut">1000</span> g</td></tr>
+        <tr><td data-i18n="salt">Salt</td><td><span id="salt">25</span> g</td></tr>
+        <tr><td data-i18n="gochugaru">Gochugaru</td><td><span id="gochugaru">16</span> g</td></tr>
+        <tr><td data-i18n="fishSauce">Fish sauce</td><td><span id="fishSauce">30</span> ml</td></tr>
+        <tr><td data-i18n="springOnions">Spring onions</td><td><span id="springOnions">40</span> g</td></tr>
+        <tr><td data-i18n="carrot">Optional carrot</td><td><span id="carrot">65</span> g</td></tr>
+      </table>
+    </section>
+
+    <section class="card">
+      <h2 data-i18n="instructions">Instructions</h2>
+
+      <ol>
+        <li><strong data-i18n="step1Title">Wash & drain.</strong> <span data-i18n="step1">Wash cabbage, drain well, and cut into bite-size pieces. The leaves should be damp, not dripping.</span></li>
+        <li><strong data-i18n="step2Title">Salt.</strong> <span data-i18n="step2">Mix thoroughly with salt. Rest 45 minutes, turning once halfway through. Do not press.</span></li>
+        <li><strong data-i18n="step3Title">Rinse & squeeze.</strong> <span data-i18n="step3">Drain brine, rinse once briefly in cold water, then squeeze firmly until no liquid drips.</span></li>
+        <li><strong data-i18n="step4Title">Season.</strong> <span data-i18n="step4">Mix gochugaru with fish sauce. Add cabbage, spring onions, and optional carrot.</span></li>
+        <li><strong data-i18n="step5Title">Pack.</strong> <span data-i18n="step5">Pack tightly into a clean jar so cabbage is submerged in its own liquid.</span></li>
+        <li><strong data-i18n="step6Title">Ferment.</strong> <span data-i18n="step6">Leave at room temperature for 24–48 hours, then refrigerate.</span></li>
+      </ol>
+    </section>
+
+    <section class="card">
+      <h2 data-i18n="window">Best eating window</h2>
+
+      <ul>
+        <li><strong data-i18n="day12">Day 1–2:</strong> <span data-i18n="day12Text">fresh and bright</span></li>
+        <li><strong data-i18n="day35">Day 3–5:</strong> <span data-i18n="day35Text">balanced classic kimchi</span></li>
+        <li><strong data-i18n="weekPlus">1+ week:</strong> <span data-i18n="weekPlusText">sharper, ideal for cooking</span></li>
+      </ul>
+    </section>
+
+    <p class="footer" data-i18n="title">Kimchi Calculator</p>
+  </main>
+
+  <script>
+    const ratios = {
+      salt: 0.025,
+      gochugaru: 0.016,
+      fishSauce: 0.03,
+      springOnions: 0.04,
+      carrot: 0.065
+    };
+
+    const translations = {
+      en: {
+        title: "Kimchi Calculator",
+        lead: "Enter how much Napa cabbage you have. Everything else scales automatically.",
+        cabbageWeight: "Napa cabbage weight",
+        ingredients: "Ingredients",
+        napa: "Napa cabbage",
+        salt: "Salt",
+        gochugaru: "Gochugaru",
+        fishSauce: "Fish sauce",
+        springOnions: "Spring onions",
+        carrot: "Optional carrot",
+        profile: "Medium heat profile. No garlic, no ginger, no pressing.",
+        instructions: "Instructions",
+        step1Title: "Wash & drain.",
+        step1: "Wash cabbage, drain well, and cut into bite-size pieces. The leaves should be damp, not dripping.",
+        step2Title: "Salt.",
+        step2: "Mix thoroughly with salt. Rest 45 minutes, turning once halfway through. Do not press.",
+        step3Title: "Rinse & squeeze.",
+        step3: "Drain brine, rinse once briefly in cold water, then squeeze firmly until no liquid drips.",
+        step4Title: "Season.",
+        step4: "Mix gochugaru with fish sauce. Add cabbage, spring onions, and optional carrot.",
+        step5Title: "Pack.",
+        step5: "Pack tightly into a clean jar so cabbage is submerged in its own liquid.",
+        step6Title: "Ferment.",
+        step6: "Leave at room temperature for 24–48 hours, then refrigerate.",
+        window: "Best eating window",
+        day12: "Day 1–2:",
+        day12Text: "fresh and bright",
+        day35: "Day 3–5:",
+        day35Text: "balanced classic kimchi",
+        weekPlus: "1+ week:",
+        weekPlusText: "sharper, ideal for cooking"
+      },
+      fr: {
+        title: "Calculateur de kimchi",
+        lead: "Indiquez la quantité de chou chinois que vous avez. Le reste est calculé automatiquement.",
+        cabbageWeight: "Poids du chou chinois",
+        ingredients: "Ingrédients",
+        napa: "Chou chinois",
+        salt: "Sel",
+        gochugaru: "Gochugaru",
+        fishSauce: "Sauce de poisson",
+        springOnions: "Oignons nouveaux",
+        carrot: "Carotte râpée optionnelle",
+        profile: "Piquant moyen. Sans ail, sans gingembre, sans pressage.",
+        instructions: "Instructions",
+        step1Title: "Laver et égoutter.",
+        step1: "Lavez le chou, égouttez-le bien, puis coupez-le en morceaux. Les feuilles doivent être humides, mais pas dégoulinantes.",
+        step2Title: "Saler.",
+        step2: "Mélangez soigneusement avec le sel. Laissez reposer 45 minutes, en retournant une fois à mi-parcours. Ne pressez pas.",
+        step3Title: "Rincer et presser.",
+        step3: "Égouttez la saumure, rincez brièvement une fois à l’eau froide, puis pressez fermement jusqu’à ce que le chou ne goutte plus.",
+        step4Title: "Assaisonner.",
+        step4: "Mélangez le gochugaru avec la sauce de poisson. Ajoutez le chou, les oignons nouveaux et la carotte râpée optionnelle.",
+        step5Title: "Mettre en bocal.",
+        step5: "Tassez bien dans un bocal propre pour que le chou soit immergé dans son propre jus.",
+        step6Title: "Fermenter.",
+        step6: "Laissez à température ambiante pendant 24 à 48 heures, puis mettez au réfrigérateur.",
+        window: "Meilleur moment pour manger",
+        day12: "Jour 1–2 :",
+        day12Text: "frais et vif",
+        day35: "Jour 3–5 :",
+        day35Text: "kimchi classique et équilibré",
+        weekPlus: "Après 1 semaine :",
+        weekPlusText: "plus acide, idéal pour cuisiner"
+      }
+    };
+
+    const cabbageInput = document.getElementById("cabbage");
+    const localeSelect = document.getElementById("locale");
+
+    function getInitialLocale() {
+      const saved = localStorage.getItem("kimchi-locale");
+      if (saved === "en" || saved === "fr") return saved;
+      return navigator.language.toLowerCase().startsWith("fr") ? "fr" : "en";
+    }
+
+    function applyLocale(locale) {
+      document.documentElement.lang = locale;
+      localeSelect.value = locale;
+
+      document.querySelectorAll("[data-i18n]").forEach((el) => {
+        const key = el.dataset.i18n;
+        el.textContent = translations[locale][key];
+      });
+    }
+
+    function round(value) {
+      return Math.round(value * 10) / 10;
+    }
+
+    function set(id, value) {
+      document.getElementById(id).textContent = round(value);
+    }
+
+    function update() {
+      const cabbage = Number(cabbageInput.value) || 0;
+
+      set("cabbageOut", cabbage);
+      set("salt", cabbage * ratios.salt);
+      set("gochugaru", cabbage * ratios.gochugaru);
+      set("fishSauce", cabbage * ratios.fishSauce);
+      set("springOnions", cabbage * ratios.springOnions);
+      set("carrot", cabbage * ratios.carrot);
+    }
+
+    localeSelect.addEventListener("change", () => {
+      localStorage.setItem("kimchi-locale", localeSelect.value);
+      applyLocale(localeSelect.value);
+    });
+
+    cabbageInput.addEventListener("input", update);
+
+    applyLocale(getInitialLocale());
+    update();
+  </script>
+</body>
+</html>
