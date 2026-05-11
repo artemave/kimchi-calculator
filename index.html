@@ -232,6 +232,7 @@
         <select id="locale" aria-label="Language">
           <option value="en">English</option>
           <option value="fr">Français</option>
+          <option value="uk">Українська</option>
         </select>
       </div>
 
@@ -367,6 +368,39 @@
         day35Text: "kimchi classique et équilibré",
         weekPlus: "Après 1 semaine :",
         weekPlusText: "plus acide, idéal pour cuisiner"
+      },
+      uk: {
+        title: "Калькулятор кімчі",
+        lead: "Введіть, скільки у вас пекінської капусти. Усе інше розраховується автоматично.",
+        cabbageWeight: "Вага пекінської капусти",
+        ingredients: "Інгредієнти",
+        napa: "Пекінська капуста",
+        salt: "Сіль",
+        gochugaru: "Кочукару",
+        fishSauce: "Рибний соус",
+        springOnions: "Зелена цибуля",
+        carrot: "Морква (за бажанням)",
+        profile: "Середня гострота. Без часнику, без імбиру, без притискання.",
+        instructions: "Інструкції",
+        step1Title: "Помити та злити.",
+        step1: "Помийте капусту, добре злийте воду та поріжте на шматочки. Листя має бути вологим, але не мокрим.",
+        step2Title: "Посолити.",
+        step2: "Ретельно перемішайте з сіллю. Залиште на 45 хвилин, перевернувши один раз посередині. Не притискайте.",
+        step3Title: "Промити та віджати.",
+        step3: "Злийте розсіл, швидко промийте холодною водою, потім міцно віджміть, доки не перестане капати.",
+        step4Title: "Приправити.",
+        step4: "Змішайте кочукару з рибним соусом. Додайте капусту, зелену цибулю та моркву за бажанням.",
+        step5Title: "Упакувати.",
+        step5: "Щільно вкладіть у чисту банку, щоб капуста була занурена у власний сік.",
+        step6Title: "Ферментувати.",
+        step6: "Залиште за кімнатної температури на 24–48 годин, потім поставте в холодильник.",
+        window: "Найкращий час для споживання",
+        day12: "День 1–2:",
+        day12Text: "свіже й яскраве",
+        day35: "День 3–5:",
+        day35Text: "збалансоване класичне кімчі",
+        weekPlus: "1+ тиждень:",
+        weekPlusText: "гостріше, ідеально для приготування страв"
       }
     };
 
@@ -375,8 +409,11 @@
 
     function getInitialLocale() {
       const saved = localStorage.getItem("kimchi-locale");
-      if (saved === "en" || saved === "fr") return saved;
-      return navigator.language.toLowerCase().startsWith("fr") ? "fr" : "en";
+      if (saved === "en" || saved === "fr" || saved === "uk") return saved;
+      const lang = navigator.language.toLowerCase();
+      if (lang.startsWith("uk")) return "uk";
+      if (lang.startsWith("fr")) return "fr";
+      return "en";
     }
 
     function applyLocale(locale) {
@@ -389,12 +426,8 @@
       });
     }
 
-    function round(value) {
-      return Math.round(value * 10) / 10;
-    }
-
     function set(id, value) {
-      document.getElementById(id).textContent = round(value);
+      document.getElementById(id).textContent = Math.round(value);
     }
 
     function update() {
