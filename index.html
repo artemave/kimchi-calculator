@@ -179,6 +179,81 @@
 
     strong { color: var(--accent); }
 
+    .ingredient-link {
+      font: inherit;
+      color: var(--accent-dark);
+      background: none;
+      border: 0;
+      padding: 0;
+      text-decoration: underline;
+      text-decoration-color: var(--border);
+      text-decoration-thickness: 2px;
+      text-underline-offset: 3px;
+      cursor: pointer;
+    }
+
+    .ingredient-link:hover,
+    .ingredient-link:focus-visible {
+      color: var(--accent);
+      text-decoration-color: var(--accent);
+      outline: none;
+    }
+
+    dialog.image-dialog {
+      width: fit-content;
+      max-width: min(96vw, 640px);
+      max-height: 90vh;
+      padding: 0;
+      border: 0;
+      border-radius: 22px;
+      background: var(--card);
+      box-shadow: 0 30px 80px rgba(124, 45, 18, 0.25);
+      overflow: hidden;
+    }
+
+    dialog.image-dialog::backdrop {
+      background: rgba(31, 41, 55, 0.55);
+      backdrop-filter: blur(2px);
+    }
+
+    dialog.image-dialog .frame {
+      overflow: hidden;
+      line-height: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    dialog.image-dialog img {
+      display: block;
+      max-width: min(96vw, 640px);
+      max-height: 90vh;
+      width: auto;
+      height: auto;
+      padding: var(--pad, 0);
+      box-sizing: border-box;
+      transform: translate(var(--shift-x, 0), var(--shift-y, 0)) scale(var(--zoom, 1));
+      transform-origin: var(--zoom-origin, center);
+    }
+
+    dialog.image-dialog .close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 1;
+      width: 36px;
+      height: 36px;
+      border-radius: 999px;
+      border: 0;
+      background: rgba(255, 255, 255, 0.92);
+      color: var(--accent-dark);
+      font-size: 1.2rem;
+      font-weight: 800;
+      line-height: 1;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(124, 45, 18, 0.18);
+    }
+
     .footer {
       text-align: center;
       margin: 24px 0 0;
@@ -187,6 +262,11 @@
     }
 
     @media (max-width: 480px) {
+      dialog.image-dialog {
+        margin: auto;
+        padding: 0;
+      }
+
       .container {
         padding-left: 12px;
         padding-right: 12px;
@@ -260,8 +340,8 @@
       <table>
         <tr><td data-i18n="napa">Napa cabbage</td><td><span id="cabbageOut">1000</span> g</td></tr>
         <tr><td data-i18n="salt">Salt</td><td><span id="salt">25</span> g</td></tr>
-        <tr><td data-i18n="gochugaru">Gochugaru</td><td><span id="gochugaru">16</span> g</td></tr>
-        <tr><td data-i18n="fishSauce">Fish sauce</td><td><span id="fishSauce">30</span> ml</td></tr>
+        <tr><td><button type="button" class="ingredient-link" data-i18n="gochugaru" data-image="gochugaru.jpg" data-zoom="1.35" data-zoom-origin="center 58%">Gochugaru</button></td><td><span id="gochugaru">16</span> g</td></tr>
+        <tr><td><button type="button" class="ingredient-link" data-i18n="fishSauce" data-image="nuoc_mam.jpg" data-pad="50px">Fish sauce</button></td><td><span id="fishSauce">30</span> ml</td></tr>
         <tr><td data-i18n="springOnions">Spring onions</td><td><span id="springOnions">40</span> g</td></tr>
         <tr><td data-i18n="carrot">Optional carrot</td><td><span id="carrot">65</span> g</td></tr>
       </table>
@@ -292,6 +372,13 @@
 
     <p class="footer" data-i18n="title">Kimchi Calculator</p>
   </main>
+
+  <dialog id="imageDialog" class="image-dialog" aria-label="Ingredient image">
+    <button type="button" class="close" aria-label="Close" data-close>&times;</button>
+    <div class="frame">
+      <img id="imageDialogImg" alt="" />
+    </div>
+  </dialog>
 
   <script>
     const ratios = {
@@ -440,6 +527,28 @@
       set("springOnions", cabbage * ratios.springOnions);
       set("carrot", cabbage * ratios.carrot);
     }
+
+    const imageDialog = document.getElementById("imageDialog");
+    const imageDialogImg = document.getElementById("imageDialogImg");
+
+    document.querySelectorAll(".ingredient-link").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        imageDialogImg.src = btn.dataset.image;
+        imageDialogImg.alt = btn.textContent;
+        imageDialogImg.style.setProperty("--zoom", btn.dataset.zoom || "1");
+        imageDialogImg.style.setProperty("--zoom-origin", btn.dataset.zoomOrigin || "center");
+        imageDialogImg.style.setProperty("--shift-x", btn.dataset.shiftX || "0");
+        imageDialogImg.style.setProperty("--shift-y", btn.dataset.shiftY || "0");
+        imageDialogImg.style.setProperty("--pad", btn.dataset.pad || "0");
+        imageDialog.showModal();
+      });
+    });
+
+    imageDialog.addEventListener("click", (e) => {
+      if (e.target === imageDialog || e.target.hasAttribute("data-close")) {
+        imageDialog.close();
+      }
+    });
 
     localeSelect.addEventListener("change", () => {
       localStorage.setItem("kimchi-locale", localeSelect.value);
